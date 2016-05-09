@@ -1,10 +1,10 @@
 {
   "name": "techan",
-  "version": "0.6.0",
+  "version": "0.0.1",
   "main": "dist/techan.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/andredumas/techan.js.git"
+    "url": "https://github.com/Koyfin/EzetechTechanJS"
   },
   "license" : "MIT",
   "dependencies": {
