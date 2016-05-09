@@ -1,0 +1,17 @@
+{
+  "name": "techan",
+  "main": "dist/techan.js",
+  "ignore": [
+    "Gruntfile.js",
+    "lib",
+    "package.json",
+    "src",
+    "test",
+    "/.*",
+    "karma.conf.js",
+    "examples"
+  ],
+  "dependencies": {
+    "d3": "~3.5.8"
+  }
+}
