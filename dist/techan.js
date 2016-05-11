@@ -3,7 +3,7 @@
  (c) 2014 - 2016 Andre Dumas | https://github.com/andredumas/techan.js
 */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.techan = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';module.exports='0.6.0';
+'use strict';module.exports='0.0.1';
 },{}],2:[function(require,module,exports){
 'use strict';
 
@@ -513,6 +513,7 @@ module.exports = function() {
 
   return bind();
 };
+
 },{}],11:[function(require,module,exports){
 'use strict';
 
@@ -1439,11 +1440,13 @@ function datum(date, macd, signal, difference, zero) {
 'use strict';
 
 module.exports = function(indicatorMixin, accessor_ohlc, indicator_ema) {  // Injected dependencies
+
   return function() { // Closure function
     var p = {},  // Container for private, direct access mixed in variables
         overbought = 70,
         middle = 50,
         oversold = 30,
+        period = 14,
         lossAverage = indicator_ema(),
         gainAverage = indicator_ema();
 
@@ -1485,10 +1488,17 @@ module.exports = function(indicatorMixin, accessor_ohlc, indicator_ema) {  // In
       return indicator;
     };
 
+    indicator.period = function(_) {
+      if (!arguments.length) return period;
+      period = _;
+      return indicator;
+    };
+
+
     // Mixin 'superclass' methods and variables
     indicatorMixin(indicator, p)
       .accessor(accessor_ohlc())
-      .period(14);
+      .period(period);
 
     return indicator;
   };
@@ -1498,6 +1508,7 @@ function datum(date, rsi, middle, overbought, oversold) {
   if(rsi) return { date: date, rsi: rsi, middle: middle, overbought: overbought, oversold: oversold };
   else return { date: date, rsi: null, middle: null, overbought: null, oversold: null };
 }
+
 },{}],29:[function(require,module,exports){
 'use strict';
 
@@ -4235,7 +4246,7 @@ module.exports = function(d3) {
 'use strict';
 
 var _d3;
-
+// test commit
 // If running in browser (window !undefined), assume d3 available
 if('undefined' != typeof window) _d3 = window.d3;
 else if('object' == typeof module) _d3 = require('d3'); // else we're in the only other supported mode: v8/node
@@ -4251,6 +4262,7 @@ module.exports = (function(d3) {
     svg: require('./svg')(d3)
   };
 })(_d3);
+
 },{"../build/version":1,"./accessor":7,"./indicator":25,"./plot":41,"./scale":56,"./svg":59,"d3":"d3"}],61:[function(require,module,exports){
 'use strict';
 

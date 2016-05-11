@@ -1,11 +1,13 @@
 'use strict';
 
 module.exports = function(indicatorMixin, accessor_ohlc, indicator_ema) {  // Injected dependencies
+
   return function() { // Closure function
     var p = {},  // Container for private, direct access mixed in variables
         overbought = 70,
         middle = 50,
         oversold = 30,
+        period = 14,
         lossAverage = indicator_ema(),
         gainAverage = indicator_ema();
 
@@ -47,10 +49,17 @@ module.exports = function(indicatorMixin, accessor_ohlc, indicator_ema) {  // In
       return indicator;
     };
 
+    indicator.period = function(_) {
+      if (!arguments.length) return period;
+      period = _;
+      return indicator;
+    };
+
+
     // Mixin 'superclass' methods and variables
     indicatorMixin(indicator, p)
       .accessor(accessor_ohlc())
-      .period(14);
+      .period(period);
 
     return indicator;
   };
