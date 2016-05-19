@@ -1,9 +1,9 @@
 /*
- TechanJS v0.0.1
+ TechanJS v0.0.7
  (c) 2014 - 2016 Andre Dumas | https://github.com/andredumas/techan.js
 */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.techan = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';module.exports='0.0.1';
+'use strict';module.exports='0.0.7';
 },{}],2:[function(require,module,exports){
 'use strict';
 
@@ -1439,7 +1439,7 @@ function datum(date, macd, signal, difference, zero) {
 },{}],28:[function(require,module,exports){
 'use strict';
 
-module.exports = function(indicatorMixin, accessor_ohlc, indicator_ema) {  // Injected dependencies
+module.exports = function(indicatorMixin, accessor_ohlc, indicator_ema) {
 
   return function() { // Closure function
     var p = {},  // Container for private, direct access mixed in variables
@@ -2232,6 +2232,7 @@ module.exports = function(d3_scale_linear, d3_extent, accessor_ohlc, plot, plotM
     return candlestick;
   };
 };
+
 },{}],39:[function(require,module,exports){
 'use strict';
 
@@ -2736,11 +2737,30 @@ module.exports = function(d3_svg_line, d3_select) {
     return area;
   }
 
-  function upDownEqual(accessor) {
+  function upDownEqual(accessor, data) {
     return {
-      up: function(d) { return accessor.o(d) < accessor.c(d); },
-      down: function(d) { return accessor.o(d) > accessor.c(d); },
-      equal: function(d) { return accessor.o(d) === accessor.c(d); }
+      //up: function(d) { return accessor.c(d) > accessor.o(d); }, // empty bar
+      //down: function(d) { return accessor.c(d) < accessor.o(d); },
+      equal: function(d, i) { return accessor.o(d) === accessor.c(d); },
+
+      emptyFillBlack: function(d, i) {
+        var yesterday = i === 0 ? d : data[i - 1];
+        return accessor.c(d) > accessor.c(yesterday) && accessor.c(d) > accessor.o(d);
+      },
+      emptyFillRed: function(d, i) {
+        var yesterday = i === 0 ? d : data[i - 1];
+        return accessor.c(d) < accessor.c(yesterday) && accessor.c(d) > accessor.o(d);
+      },
+
+      fillBlack: function(d, i) {
+        var yesterday = i === 0 ? d : data[i - 1];
+        return accessor.c(d) > accessor.c(yesterday) && accessor.c(d) < accessor.o(d);
+      },
+      fillRed: function(d, i) {
+        var yesterday = i === 0 ? d : data[i - 1];
+        return accessor.c(d) < accessor.c(yesterday) && accessor.c(d) < accessor.o(d);
+      },
+
     };
   }
 
@@ -2748,14 +2768,13 @@ module.exports = function(d3_svg_line, d3_select) {
     var plotNames = plotName instanceof Array ? plotName : [plotName];
 
     classes = classes || upDownEqual(accessor);
-
     Object.keys(classes).forEach(function(key) {
       appendPlotTypePath(g, classes[key], plotNames, key);
     });
   }
 
   function appendPathsUpDownEqual(g, accessor, plotName) {
-    appendPathsGroupBy(g, accessor, plotName, upDownEqual(accessor));
+    appendPathsGroupBy(g, accessor, plotName, upDownEqual(accessor, g.data()[0]));
   }
 
   function appendPlotTypePath(g, data, plotNames, direction) {

@@ -52,11 +52,30 @@ module.exports = function(d3_svg_line, d3_select) {
     return area;
   }
 
-  function upDownEqual(accessor) {
+  function upDownEqual(accessor, data) {
     return {
-      up: function(d) { return accessor.o(d) < accessor.c(d); },
-      down: function(d) { return accessor.o(d) > accessor.c(d); },
-      equal: function(d) { return accessor.o(d) === accessor.c(d); }
+      //up: function(d) { return accessor.c(d) > accessor.o(d); }, // empty bar
+      //down: function(d) { return accessor.c(d) < accessor.o(d); },
+      equal: function(d, i) { return accessor.o(d) === accessor.c(d); },
+
+      emptyFillBlack: function(d, i) {
+        var yesterday = i === 0 ? d : data[i - 1];
+        return accessor.c(d) > accessor.c(yesterday) && accessor.c(d) > accessor.o(d);
+      },
+      emptyFillRed: function(d, i) {
+        var yesterday = i === 0 ? d : data[i - 1];
+        return accessor.c(d) < accessor.c(yesterday) && accessor.c(d) > accessor.o(d);
+      },
+
+      fillBlack: function(d, i) {
+        var yesterday = i === 0 ? d : data[i - 1];
+        return accessor.c(d) > accessor.c(yesterday) && accessor.c(d) < accessor.o(d);
+      },
+      fillRed: function(d, i) {
+        var yesterday = i === 0 ? d : data[i - 1];
+        return accessor.c(d) < accessor.c(yesterday) && accessor.c(d) < accessor.o(d);
+      },
+
     };
   }
 
@@ -64,14 +83,13 @@ module.exports = function(d3_svg_line, d3_select) {
     var plotNames = plotName instanceof Array ? plotName : [plotName];
 
     classes = classes || upDownEqual(accessor);
-
     Object.keys(classes).forEach(function(key) {
       appendPlotTypePath(g, classes[key], plotNames, key);
     });
   }
 
   function appendPathsUpDownEqual(g, accessor, plotName) {
-    appendPathsGroupBy(g, accessor, plotName, upDownEqual(accessor));
+    appendPathsGroupBy(g, accessor, plotName, upDownEqual(accessor, g.data()[0]));
   }
 
   function appendPlotTypePath(g, data, plotNames, direction) {
