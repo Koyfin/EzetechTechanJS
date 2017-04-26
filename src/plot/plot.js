@@ -60,7 +60,7 @@ module.exports = function(d3_svg_line, d3_select) {
 
       emptyFillBlack: function(d, i) {
         var yesterday = i === 0 ? d : data[i - 1];
-        return accessor.c(d) > accessor.c(yesterday) && accessor.c(d) > accessor.o(d);
+        return accessor.c(d) >= accessor.c(yesterday) && accessor.c(d) > accessor.o(d);
       },
       emptyFillRed: function(d, i) {
         var yesterday = i === 0 ? d : data[i - 1];
@@ -69,7 +69,7 @@ module.exports = function(d3_svg_line, d3_select) {
 
       fillBlack: function(d, i) {
         var yesterday = i === 0 ? d : data[i - 1];
-        return accessor.c(d) > accessor.c(yesterday) && accessor.c(d) < accessor.o(d);
+        return accessor.c(d) >= accessor.c(yesterday) && accessor.c(d) < accessor.o(d);
       },
       fillRed: function(d, i) {
         var yesterday = i === 0 ? d : data[i - 1];
